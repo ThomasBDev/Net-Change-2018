@@ -30,13 +30,16 @@ namespace MultiClientServer
                 StreamWriter clientOut = new StreamWriter(client.GetStream());
                 clientOut.AutoFlush = true;
 
+                string[] messageFromClient = clientIn.ReadLine().Split();
+
                 // De server weet niet wat de poort is van de client die verbinding maakt, de client geeft dus als onderdeel van het protocol als eerst een bericht met zijn poort
                 int zijnPoort = int.Parse(clientIn.ReadLine().Split()[1]);
 
-                Console.WriteLine("Client maakt verbinding: " + zijnPoort);
-
                 // Zet de nieuwe verbinding in de verbindingslijst
                 Program.Buren.Add(zijnPoort, new Connection(clientIn, clientOut));
+                Program.Du.Add(zijnPoort, 1);
+
+                Console.WriteLine("Client " + zijnPoort + " maakt verbinding met ons (Server)");
             }
         }
     }

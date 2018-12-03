@@ -23,6 +23,8 @@ namespace MultiClientServer
             Write.AutoFlush = true;
 
             // De server kan niet zien van welke poort wij client zijn, dit moeten we apart laten weten
+
+            //Een bericht dat begint met Poort: zorgt ervoor dat er een verbinding beide kanten wordt opgezet?
             Write.WriteLine("Poort: " + Program.MijnPoort);
 
             // Start het reader-loopje
