@@ -14,6 +14,8 @@ namespace MultiClientServer
         public StreamReader Read;
         public StreamWriter Write;
 
+        public int poort;
+
         // Connection heeft 2 constructoren: deze constructor wordt gebruikt als wij CLIENT worden bij een andere SERVER
         public Connection(int port)
         {
@@ -22,9 +24,8 @@ namespace MultiClientServer
             Write = new StreamWriter(client.GetStream());
             Write.AutoFlush = true;
 
-            // De server kan niet zien van welke poort wij client zijn, dit moeten we apart laten weten
+            Console.WriteLine("Connection constructor Client -> Server");
 
-            //Een bericht dat begint met Poort: zorgt ervoor dat er een verbinding beide kanten wordt opgezet?
             Write.WriteLine("Poort: " + Program.MijnPoort);
 
             // Start het reader-loopje
@@ -32,9 +33,12 @@ namespace MultiClientServer
         }
 
         // Deze constructor wordt gebruikt als wij SERVER zijn en een CLIENT maakt met ons verbinding
-        public Connection(StreamReader read, StreamWriter write)
+        public Connection(StreamReader read, StreamWriter write, int mijnPoort)
         {
             Read = read; Write = write;
+
+            Console.WriteLine("Connection constructor Server <- Client");
+            poort = mijnPoort;
 
             // Start het reader-loopje
             new Thread(ReaderThread).Start();
@@ -48,9 +52,46 @@ namespace MultiClientServer
             try
             {
                 while (true)
-                    Console.WriteLine(Read.ReadLine());
+                {
+                    Console.WriteLine("LISTEN FOR OTHER NODES IN CONNECTION.CS");
+                    listenForOtherNodes();
+                    Console.WriteLine();
+                }
             }
             catch { } // Verbinding is kennelijk verbroken
+        }
+
+        public void listenForOtherNodes()
+        {
+            string[] incomingMessage = Read.ReadLine().Split();
+            string command = incomingMessage[0];
+            int anderePoort = int.Parse(incomingMessage[1]);
+
+            switch (command)
+            {
+                case "B":
+                    string message = incomingMessage[2];
+                    Console.WriteLine("B bericht binnengekomen = " + command + " " + anderePoort + " " + message);
+                    break;
+                case "C":
+                    Console.WriteLine("C bericht binnengekomen = " + command + " " + anderePoort);
+                    break;
+                case "D":
+                    Console.WriteLine("D bericht binnengekomen = " + command + " " + anderePoort);
+                
+                    Program.Buren.Remove(poort);
+                    Program.Du.Remove(poort);
+                    break;
+                case "M":
+                    int newDist = int.Parse(incomingMessage[2]);
+                    int sender = Program.MijnPoort;
+                    Program.Ndis[new Tuple<int, int>(sender, anderePoort)] = newDist;
+                    Program.Recompute(anderePoort);
+                    break;
+                default:
+                    Console.WriteLine("command = " + command);
+                    break;
+            }
         }
     }
 }

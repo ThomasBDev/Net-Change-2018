@@ -8,125 +8,156 @@ namespace MultiClientServer
     class Program
     { 
         static public int MijnPoort;
+        public static List<int> nodes = new List<int>();
         static public Dictionary<int, Connection> Buren = new Dictionary<int, Connection>();
         static public Dictionary<int, int> Du = new Dictionary<int, int>();
         static public Dictionary<Tuple<int, int>, int> Ndis = new Dictionary<Tuple<int, int>, int>(); 
         static public Dictionary<int, int> Nb = new Dictionary<int, int>();
         static Input input = new Input();
-        
+
         static void Main(string[] args)
         {
             //Initialisatie.
             MijnPoort = int.Parse(args[0]);
             Console.Title = "NetChange " +  args[0];
             new Server(MijnPoort);
+            Console.WriteLine("SERVER GESTART");
+
+            Du.Add(MijnPoort, 0);
+            Nb.Add(MijnPoort, MijnPoort);
+            nodes.Add(MijnPoort);
 
             Du.Add(MijnPoort, 0);
             Nb.Add(MijnPoort, MijnPoort);
             for (int t = 1; t < args.Length; t++)
             {
-                int AnderePoort = int.Parse(args[t]);
-                if (MijnPoort < AnderePoort)
+                int anderePoort = int.Parse(args[t]);
+                if (MijnPoort < anderePoort)
                 {
-                    Buren.Add(AnderePoort, new Connection(AnderePoort));
-                    Ndis.Add(new Tuple<int, int>(AnderePoort, AnderePoort), 1);
-                    Du.Add(AnderePoort, 1);
-                    Nb.Add(AnderePoort, AnderePoort); //pref neighbour; (nb, destination)
-                    Console.WriteLine("Start verbinding gemaakt naar " + AnderePoort);
+                    nodes.Add(anderePoort);
+                    Buren.Add(anderePoort, new Connection(anderePoort));
+                    Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
+                    Du.Add(anderePoort, 1);
+                    Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
+                    Console.WriteLine("INITIAL Verbonden: " + anderePoort);
                 }
             }
 
             foreach (KeyValuePair<int, Connection> buur in Buren)
             {
                 // send Mydist MijnPoort 0 to buur
+                buur.Value.Write.WriteLine("M " + MijnPoort + " " + 0);
             }
 
             //Na de initialisatie.
             while (true)
             {
-                string[] input = Console.ReadLine().Split();
-                string messageType = input[0];
+                Console.WriteLine("LISTEN FOR USER INPUT IN PROGRAM.CS");
+                listenForUserInput();
+                Console.WriteLine();
+            }
+        }
 
-                if (messageType == "R")
+        static void listenForUserInput()
+        {
+            string[] input = Console.ReadLine().Split();
+            string messageType = input[0];
+
+            if (messageType == "R")
+                printRoutingTable();
+            else
+            {
+                int anderePoort = -1;
+
+                //if voorkomt een out of array exception als je een invalid command geeft.
+                if (messageType == "B" || messageType == "C" || messageType == "D")
+                    anderePoort = int.Parse(input[1]);
+
+                switch (messageType)
                 {
-                    //1 = Alle doel nodes bereikbaar vanaf deze node.
-                    //2 = Bekendste korste afstanden tot de doel nodes.
-                    //3 = De buren die je moet nemen als je de korste route naar die doel node wil nemen.
-
-                    int k = 0;
-                    int[] nodes = new int[Buren.Count];
-
-                    // for (int t = 0; t < Buren.Keys.Count, t++)
-                    foreach (int key in Buren.Keys)
-                    {
-                        nodes[k] = key;
-                        k++;
-                    }
-
-                    for (int t = 0; t < Buren.Count; t++)
-                    {
-                        int doelNode = nodes[t];
-                        int korsteAfstand = Du[doelNode];
-                        int besteBuur = 100 - t;
-
-                        Console.WriteLine(doelNode + " " + korsteAfstand + " " + besteBuur);
-                    }
-                }
-                else
-                {
-                    int AnderePoort = int.Parse(input[1]);
-
-                    switch (messageType)
-                    {
-                        case "B":
-                            string bericht = input[2];
-                            if (!Buren.ContainsKey(AnderePoort))
-                                Console.WriteLine("We hebben geen verbinding naar " + AnderePoort + " om een bericht over te kunnen sturen");
-                            else
-                                Buren[AnderePoort].Write.WriteLine("Van " + MijnPoort + " hebben we een bericht gekregen: " + bericht);
-                            break;
-                        //Verbining wordt nog beide kanten op gemaakt.
-                        case "C":
-                            if (Buren.ContainsKey(AnderePoort))
-                                Console.WriteLine("We hebben al een verbinding naar " + AnderePoort);
-                            else
-                            {
-                                try
-                                {
-                                    // Leg verbinding aan (als client)
-                                    Buren.Add(AnderePoort, new Connection(AnderePoort));
-                                    Du.Add(AnderePoort, 1);
-                                    Console.WriteLine("Vebinding gemaakt naar " + AnderePoort);
-                                }
-                                catch(System.Net.Sockets.SocketException)
-                                {
-                                    Console.WriteLine("De node bestaat niet");
-                                }
-                            }
-                            break;
-                        //Verbinding wordt alleen vanaf deze kant verwijderd.
-                        case "D":
-                            if (!Buren.ContainsKey(AnderePoort))
-                                Console.WriteLine("We hebben geen verbinding naar deze node om te verbreken");
-                            else
-                            {
-                                Buren.Remove(AnderePoort);
-                                Console.WriteLine("Verbinding naar " + AnderePoort + " verbroken");
-                                Console.WriteLine("Buren na verwijderen:");
-                                for (int t = 1; t < args.Length; t++)
-                                    if (Buren.ContainsKey(int.Parse(args[t])))
-                                        Console.WriteLine(int.Parse(args[t]));
-                                //Du zou kunnen via andere route.
-                            }
-                            break;
-                        default:
-                            Console.WriteLine("Invalid command");
-                            break;
-                    }
+                    case "B":
+                        sendMessage(anderePoort, input[2]);
+                        break;
+                    //Verbinding wordt nog beide kanten op gemaakt.
+                    case "C":
+                        createConnection(anderePoort);
+                        break;
+                    //Verbinding wordt alleen vanaf deze kant verwijderd.
+                    case "D":
+                        destroyConnection(anderePoort);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command");
+                        break;
                 }
             }
         }
-        public void Recompute(int Destination)
+
+        static void printRoutingTable()
+        {
+            foreach (KeyValuePair<int, int> d in Du)
+            {
+                int destination = d.Key;
+                int distance = d.Value;
+                //int prefNb = Nb[];
+                Console.WriteLine(destination + " " + distance + " " + 0);
+            }
+        }
+
+        static void sendMessage(int anderePoort, string bericht)
+        {
+            if (!Buren.ContainsKey(anderePoort))
+                Console.WriteLine("Poort " + anderePoort + " is niet bekend");
+            else if (MijnPoort != anderePoort)
+            {
+                int besteBuur;
+                Console.WriteLine("Bericht voor " + anderePoort + " doorgestuurd naar " + "besteBuur");
+                Buren[anderePoort].Write.WriteLine("B " + anderePoort + " " + bericht);
+            }
+            else
+                Buren[anderePoort].Write.WriteLine(bericht);
+        }
+
+        static void createConnection(int anderePoort)
+        {
+            if (Buren.ContainsKey(anderePoort))
+                Console.WriteLine("We hebben al een verbinding naar " + anderePoort);
+            else
+            {
+                try
+                {
+                    Buren.Add(anderePoort, new Connection(anderePoort));
+                    Du.Add(anderePoort, 1);
+                    Buren[anderePoort].Write.WriteLine("C " + anderePoort);
+
+                    Console.WriteLine("Verbonden: " + anderePoort);
+
+                    //Console.WriteLine("Foreach in Program.cs");
+                    //foreach (KeyValuePair<int, Connection> Buur in Program.Buren)
+                    //    Console.WriteLine("Buur = " + Buur.Key);
+                }
+                catch (System.Net.Sockets.SocketException)
+                {
+                    Console.WriteLine("De node bestaat niet");
+                }
+            }
+        }
+
+        static void destroyConnection(int anderePoort)
+        {
+            if (!Buren.ContainsKey(anderePoort))
+                Console.WriteLine("Poort " + anderePoort + " is niet bekend");
+            else
+            {
+                Buren[anderePoort].Write.WriteLine("D " + anderePoort);
+                Buren.Remove(anderePoort);
+                Du.Remove(anderePoort);
+
+                Console.WriteLine("Verbroken: " + anderePoort);
+            }
+        }
+        
+        public static void Recompute(int Destination)
         {
             int oldDu = Du[Destination];
             if (MijnPoort == Destination)
@@ -158,8 +189,8 @@ namespace MultiClientServer
             }
             if (Du[Destination] != oldDu)
             {
-                //send myDist again with new Du to all nb
-                //otherwise just stop
+                foreach (KeyValuePair<int, Connection> buur in Buren)
+                    buur.Value.Write.WriteLine("M " + Destination + " " + Du[Destination]);
             }
         }
     }
