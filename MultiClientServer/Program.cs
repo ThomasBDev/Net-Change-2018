@@ -27,8 +27,6 @@ namespace MultiClientServer
             Nb.Add(MijnPoort, MijnPoort);
             nodes.Add(MijnPoort);
 
-            Du.Add(MijnPoort, 0);
-            Nb.Add(MijnPoort, MijnPoort);
             for (int t = 1; t < args.Length; t++)
             {
                 int anderePoort = int.Parse(args[t]);
@@ -64,7 +62,10 @@ namespace MultiClientServer
             string messageType = input[0];
 
             if (messageType == "R")
+            {
+                Console.WriteLine("PRINT ROUTINGTABLE");
                 printRoutingTable();
+            }
             else
             {
                 int anderePoort = -1;
@@ -76,18 +77,21 @@ namespace MultiClientServer
                 switch (messageType)
                 {
                     case "B":
+                        Console.WriteLine("SEND MESSAGE");
                         sendMessage(anderePoort, input[2]);
                         break;
                     //Verbinding wordt nog beide kanten op gemaakt.
                     case "C":
+                        Console.WriteLine("CREATE CONNECTION");
                         createConnection(anderePoort);
                         break;
                     //Verbinding wordt alleen vanaf deze kant verwijderd.
                     case "D":
+                        Console.WriteLine("DESTROY CONNECTION");
                         destroyConnection(anderePoort);
                         break;
                     default:
-                        Console.WriteLine("Invalid command");
+                        Console.WriteLine("INVALID COMMAND");
                         break;
                 }
             }
@@ -115,7 +119,10 @@ namespace MultiClientServer
                 Buren[anderePoort].Write.WriteLine("B " + anderePoort + " " + bericht);
             }
             else
+            {
+                Console.WriteLine("Bericht is voor ons bestemd.");
                 Buren[anderePoort].Write.WriteLine(bericht);
+            }
         }
 
         static void createConnection(int anderePoort)

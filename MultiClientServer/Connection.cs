@@ -67,6 +67,8 @@ namespace MultiClientServer
             string command = incomingMessage[0];
             int anderePoort = int.Parse(incomingMessage[1]);
 
+            Console.WriteLine("command " + command);
+
             switch (command)
             {
                 case "B":
@@ -78,18 +80,17 @@ namespace MultiClientServer
                     break;
                 case "D":
                     Console.WriteLine("D bericht binnengekomen = " + command + " " + anderePoort);
-                
                     Program.Buren.Remove(poort);
                     Program.Du.Remove(poort);
                     break;
-                case "M":
-                    int newDist = int.Parse(incomingMessage[2]);
-                    int sender = Program.MijnPoort;
-                    Program.Ndis[new Tuple<int, int>(sender, anderePoort)] = newDist;
-                    Program.Recompute(anderePoort);
-                    break;
+                //case "M":
+                //    int newDist = int.Parse(incomingMessage[2]);
+                //    int sender = Program.MijnPoort;
+                //    Program.Ndis[new Tuple<int, int>(sender, anderePoort)] = newDist;
+                //    Program.Recompute(anderePoort);
+                //    break;
                 default:
-                    Console.WriteLine("command = " + command);
+                    Console.WriteLine("other command = " + command);
                     break;
             }
         }
