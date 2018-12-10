@@ -38,15 +38,6 @@ namespace MultiClientServer
                 string command = messageFromClient[0];
                 int anderePoort = int.Parse(messageFromClient[1]);
 
-                Console.WriteLine("+++++++++++++++++++++++++++++++++++ command = " + command);
-                Console.WriteLine("+++++++++++++++++++++++++++++++ anderePoort = " + anderePoort);
-
-                //Console.WriteLine("Foreach in Server.cs voor");
-                //foreach (KeyValuePair<int, Connection> Buur in Program.Buren)
-                //    Console.WriteLine("Buur = " + Buur.Key);
-
-
-
                 //Je hebt een verbinding heen en terug tussen A en B.
                 //Als A de verbinding verbreekt, dan blijft de verbinding van B naar A intact.
                 //Als A dan weer een verbinding naar B wil maken, dan moet er dus gecheckt worden.
@@ -60,29 +51,10 @@ namespace MultiClientServer
                     Console.WriteLine("We maken een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
                     // Zet de nieuwe verbinding in de verbindingslijst
                     Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut, anderePoort));
+                    Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
                     Program.Du.Add(anderePoort, 1);
+                    Program.Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
                 }
-
-
-                //if (command == "C")
-                //    Console.WriteLine("C bericht in Server.cs --> Geen verbinding terug");
-
-                //else if (command == "Poort:")
-                //{
-                //    // Zet de nieuwe verbinding in de verbindingslijst
-                //    Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut));
-                //    Program.Du.Add(anderePoort, 1);
-                //}
-
-                //else
-                //    Console.WriteLine("Niet C of Poort, command = " + command);
-
-
-
-                //Console.WriteLine("Foreach in Server.cs na");
-                //foreach (KeyValuePair<int, Connection> Buur in Program.Buren)
-                //    Console.WriteLine("Buur = " + Buur.Key);
-
                 Console.WriteLine();
             }
         }

@@ -80,12 +80,10 @@ namespace MultiClientServer
                         Console.WriteLine("SEND MESSAGE");
                         sendMessage(anderePoort, input[2]);
                         break;
-                    //Verbinding wordt nog beide kanten op gemaakt.
                     case "C":
                         Console.WriteLine("CREATE CONNECTION");
                         createConnection(anderePoort);
                         break;
-                    //Verbinding wordt alleen vanaf deze kant verwijderd.
                     case "D":
                         Console.WriteLine("DESTROY CONNECTION");
                         destroyConnection(anderePoort);

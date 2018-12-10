@@ -92,8 +92,18 @@ namespace MultiClientServer
                     Console.WriteLine("anderePoort = " + anderePoort);
                     Console.WriteLine("destination = " + destination);
                     Console.WriteLine("newDist     = " + newDist);
-                //    Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
-                //    Program.Recompute(destination);
+
+                    Console.WriteLine("OLD Ndis:");
+                    foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
+                        Console.WriteLine(element);
+
+                    Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
+
+                    Console.WriteLine("NEW Ndis:");
+                    foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
+                        Console.WriteLine(element);
+
+                    //    Program.Recompute(destination);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);
