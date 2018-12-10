@@ -44,7 +44,7 @@ namespace MultiClientServer
             foreach (KeyValuePair<int, Connection> buur in Buren)
             {
                 // send Mydist MijnPoort 0 to buur
-                buur.Value.Write.WriteLine("M " + MijnPoort + " " + 0);
+                buur.Value.Write.WriteLine("M " + MijnPoort + " " + MijnPoort + " 0");
             }
 
             //Na de initialisatie.

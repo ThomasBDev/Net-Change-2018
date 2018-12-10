@@ -83,12 +83,18 @@ namespace MultiClientServer
                     Program.Buren.Remove(poort);
                     Program.Du.Remove(poort);
                     break;
-                //case "M":
-                //    int newDist = int.Parse(incomingMessage[2]);
-                //    int sender = Program.MijnPoort;
-                //    Program.Ndis[new Tuple<int, int>(sender, anderePoort)] = newDist;
-                //    Program.Recompute(anderePoort);
-                //    break;
+                case "M":
+                    int destination = int.Parse(incomingMessage[2]);
+                    int newDist = int.Parse(incomingMessage[3]);
+
+                    Console.WriteLine("M bericht binnengekomen");
+                    Console.WriteLine("command     = " + command);
+                    Console.WriteLine("anderePoort = " + anderePoort);
+                    Console.WriteLine("destination = " + destination);
+                    Console.WriteLine("newDist     = " + newDist);
+                //    Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
+                //    Program.Recompute(destination);
+                    break;
                 default:
                     Console.WriteLine("other command = " + command);
                     break;
