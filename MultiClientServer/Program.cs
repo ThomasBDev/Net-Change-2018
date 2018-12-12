@@ -8,11 +8,11 @@ namespace MultiClientServer
     class Program
     { 
         static public int MijnPoort;
-        public static List<int> nodes = new List<int>();
-        static public Dictionary<int, Connection> Buren = new Dictionary<int, Connection>();
+        public static Dictionary<int, Connection> Buren = new Dictionary<int, Connection>();
         static public Dictionary<int, int> Du = new Dictionary<int, int>();
         static public Dictionary<Tuple<int, int>, int> Ndis = new Dictionary<Tuple<int, int>, int>(); 
         static public Dictionary<int, int> Nb = new Dictionary<int, int>();
+        public static RoutingTable routingTable = new RoutingTable();
         static Input input = new Input();
 
         static void Main(string[] args)
@@ -24,28 +24,32 @@ namespace MultiClientServer
             Console.WriteLine("SERVER GESTART");
 
             Du.Add(MijnPoort, 0);
+            Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
             Nb.Add(MijnPoort, MijnPoort);
-            nodes.Add(MijnPoort);
 
             for (int t = 1; t < args.Length; t++)
             {
-                int anderePoort = int.Parse(args[t]);
-                if (MijnPoort < anderePoort)
-                {
-                    nodes.Add(anderePoort);
-                    Buren.Add(anderePoort, new Connection(anderePoort));
-                    Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
-                    Du.Add(anderePoort, 1);
-                    Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
-                    Console.WriteLine("INITIAL Verbonden: " + anderePoort);
-                }
+                lock (Buren)
+                    lock (Du)
+                        lock (Nb)
+                            lock (Ndis)
+                            {
+                                int anderePoort = int.Parse(args[t]);
+                                if (MijnPoort < anderePoort)
+                                {
+                                    if (!Buren.ContainsKey(anderePoort))
+                                    {
+                                        Buren.Add(anderePoort, new Connection(anderePoort));
+                                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
+                                        Du.Add(anderePoort, 1);
+                                        Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
+                                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
+                                        NetChange.Recompute(anderePoort);
+                                    }
+                                }
+                            }
             }
-
-            foreach (KeyValuePair<int, Connection> buur in Buren)
-            {
-                // send Mydist MijnPoort 0 to buur
-                buur.Value.Write.WriteLine("M " + MijnPoort + " " + MijnPoort + " 0");
-            }
+            NetChange.InitMdis();
 
             //Na de initialisatie.
             while (true)
@@ -97,12 +101,13 @@ namespace MultiClientServer
 
         static void printRoutingTable()
         {
-            foreach (KeyValuePair<int, int> d in Du)
+            foreach (KeyValuePair<Tuple<int,int>,int> kvp in Ndis)
             {
-                int destination = d.Key;
-                int distance = d.Value;
+                int prefNb = kvp.Key.Item1;
+                int destination = kvp.Key.Item2;
+                int distance = kvp.Value;
                 //int prefNb = Nb[];
-                Console.WriteLine(destination + " " + distance + " " + 0);
+                Console.WriteLine(destination + " " + distance + " " + prefNb);
             }
         }
 
@@ -159,43 +164,6 @@ namespace MultiClientServer
                 Du.Remove(anderePoort);
 
                 Console.WriteLine("Verbroken: " + anderePoort);
-            }
-        }
-        
-        public static void Recompute(int Destination)
-        {
-            int oldDu = Du[Destination];
-            if (MijnPoort == Destination)
-            {
-                Du[MijnPoort] = 0;
-                Nb[MijnPoort] = MijnPoort;
-            }
-            else
-            {
-                int smallestNdis = 3;
-                int newPrefNb = Nb[Destination];
-                foreach (KeyValuePair<int, Connection> buur in Buren)
-                    if (Ndis[new Tuple<int, int>(buur.Key, MijnPoort)] < smallestNdis)
-                    {
-                        smallestNdis = Ndis[new Tuple<int, int>(buur.Key, Destination)];
-                        newPrefNb = buur.Key;
-                    }
-                int distance = 1 + smallestNdis;
-                if (distance < 3)
-                {
-                    Du[Destination] = distance;
-                    Nb[Destination] = newPrefNb;
-                }
-                else
-                {
-                    Du[Destination] = 3;
-                    Nb[Destination] = 0;
-                }
-            }
-            if (Du[Destination] != oldDu)
-            {
-                foreach (KeyValuePair<int, Connection> buur in Buren)
-                    buur.Value.Write.WriteLine("M " + Destination + " " + Du[Destination]);
             }
         }
     }
