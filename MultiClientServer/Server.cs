@@ -27,8 +27,6 @@ namespace MultiClientServer
         {
             while (true)
             {
-                Console.WriteLine("LISTEN FOR CONNECTIONS IN SERVER.CS");
-
                 TcpClient client = handle.AcceptTcpClient();
                 StreamReader clientIn = new StreamReader(client.GetStream());
                 StreamWriter clientOut = new StreamWriter(client.GetStream());

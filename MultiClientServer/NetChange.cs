@@ -17,7 +17,8 @@ namespace MultiClientServer
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
                 // send Mydist MijnPoort 0 to buur
-                buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + Program.MijnPoort + " 0");
+                Console.WriteLine("InitMdis:");
+                sendMmessageTo(buur, Program.MijnPoort, 0);
                 if (!nodes.Contains(buur.Key))
                     nodes.Add(buur.Key);
                 Console.WriteLine("TEST: " + buur.Key);
@@ -63,11 +64,24 @@ namespace MultiClientServer
                     Program.Nb[Destination] = 0;
                 }
             }
+
+            Console.WriteLine("DISTANCES:");
+            Console.WriteLine("Destination = " + Destination);
+            Console.WriteLine(Program.Du[Destination] + " " + oldDu);
             if (Program.Du[Destination] != oldDu)
             {
                 foreach (KeyValuePair<int, Connection> buur in Program.Buren)
-                    buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + Destination + " " + Program.Du[Destination]);
+                {
+                    Console.WriteLine("Recompute:");
+                    sendMmessageTo(buur, Destination, Program.Du[Destination]);
+                }
             }
+        }
+
+        public static void sendMmessageTo(KeyValuePair<int, Connection> buur, int destination, int distance)
+        {
+            Console.WriteLine("sendMmessageTo " + buur.Key + " with destination " + destination + " and distance " + distance);
+            buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + destination + " " + distance);
         }
     }
 }

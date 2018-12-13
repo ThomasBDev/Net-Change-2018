@@ -53,9 +53,7 @@ namespace MultiClientServer
             {
                 while (true)
                 {
-                    Console.WriteLine("LISTEN FOR OTHER NODES IN CONNECTION.CS");
                     listenForOtherNodes();
-                    Console.WriteLine();
                 }
             }
             catch { } // Verbinding is kennelijk verbroken
@@ -103,7 +101,7 @@ namespace MultiClientServer
                     foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
                         Console.WriteLine(element);
 
-                    //    Program.Recompute(destination);
+                    //NetChange.Recompute(destination);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

@@ -21,7 +21,6 @@ namespace MultiClientServer
             MijnPoort = int.Parse(args[0]);
             Console.Title = "NetChange " +  args[0];
             new Server(MijnPoort);
-            Console.WriteLine("SERVER GESTART");
 
             Du.Add(MijnPoort, 0);
             Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
@@ -54,9 +53,7 @@ namespace MultiClientServer
             //Na de initialisatie.
             while (true)
             {
-                Console.WriteLine("LISTEN FOR USER INPUT IN PROGRAM.CS");
                 listenForUserInput();
-                Console.WriteLine();
             }
         }
 
