@@ -52,6 +52,8 @@ namespace MultiClientServer
                     Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
                     Program.Du.Add(anderePoort, 1);
                     Program.Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
+                    //NetChange.routingTable.SetRoute(anderePoort, anderePoort, 1);
+                    NetChange.Recompute(anderePoort);
                 }
                 Console.WriteLine();
             }

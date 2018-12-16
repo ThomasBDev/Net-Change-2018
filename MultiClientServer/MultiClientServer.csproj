@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Connection.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Ndis.cs" />
     <Compile Include="NetChange.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

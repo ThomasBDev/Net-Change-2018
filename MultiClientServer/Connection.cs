@@ -63,7 +63,7 @@ namespace MultiClientServer
         {
             string[] incomingMessage = Read.ReadLine().Split();
             string command = incomingMessage[0];
-            int anderePoort = int.Parse(incomingMessage[1]);
+            int anderePoort = int.Parse(incomingMessage[2]);
 
             Console.WriteLine("command " + command);
 
@@ -82,8 +82,8 @@ namespace MultiClientServer
                     Program.Du.Remove(poort);
                     break;
                 case "M":
-                    int destination = int.Parse(incomingMessage[2]);
-                    int newDist = int.Parse(incomingMessage[3]);
+                    int destination = int.Parse(incomingMessage[3]);
+                    int newDist = int.Parse(incomingMessage[4]);
 
                     Console.WriteLine("M bericht binnengekomen");
                     Console.WriteLine("command     = " + command);
@@ -100,8 +100,9 @@ namespace MultiClientServer
                     Console.WriteLine("NEW Ndis:");
                     foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
                         Console.WriteLine(element);
+                    //NetChange.routingTable()
 
-                    //NetChange.Recompute(destination);
+                    NetChange.Recompute(destination);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

@@ -25,28 +25,27 @@ namespace MultiClientServer
             Du.Add(MijnPoort, 0);
             Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
             Nb.Add(MijnPoort, MijnPoort);
+            routingTable.SetRoute(MijnPoort, MijnPoort, 0);
 
             for (int t = 1; t < args.Length; t++)
             {
-                lock (Buren)
-                    lock (Du)
-                        lock (Nb)
-                            lock (Ndis)
-                            {
-                                int anderePoort = int.Parse(args[t]);
-                                if (MijnPoort < anderePoort)
-                                {
-                                    if (!Buren.ContainsKey(anderePoort))
-                                    {
-                                        Buren.Add(anderePoort, new Connection(anderePoort));
-                                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
-                                        Du.Add(anderePoort, 1);
-                                        Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
-                                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
-                                        NetChange.Recompute(anderePoort);
-                                    }
-                                }
-                            }
+                int anderePoort = int.Parse(args[t]);
+                if (MijnPoort < anderePoort)
+                {
+                    if (!Buren.ContainsKey(anderePoort))
+                    {
+                        while (!Buren.ContainsKey(anderePoort))
+                            Buren.Add(anderePoort, new Connection(anderePoort));
+                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
+                        Du.Add(anderePoort, 1);
+                        Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
+                        routingTable.SetRoute(anderePoort, anderePoort, 1);
+                        NetChange.UpdateDist(anderePoort, MijnPoort, 1);
+                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
+                        //NetChange.Recompute(anderePoort);
+                    }
+
+                }
             }
             NetChange.InitMdis();
 
@@ -98,12 +97,18 @@ namespace MultiClientServer
 
         static void printRoutingTable()
         {
-            foreach (KeyValuePair<Tuple<int,int>,int> kvp in Ndis)
+            foreach (KeyValuePair<int, Tuple<int,int>> kvp in NetChange.routingTable.routingTable)
             {
-                int prefNb = kvp.Key.Item1;
-                int destination = kvp.Key.Item2;
-                int distance = kvp.Value;
-                //int prefNb = Nb[];
+                int destination = kvp.Key;
+                int prefNb = kvp.Value.Item1;
+                int distance = kvp.Value.Item2;
+                if (distance == 0)
+                {
+                    Console.WriteLine(destination + " " + 0 + " local");
+                    continue;
+                }
+                if (distance > NetChange.maxNetworkSize)
+                    continue;
                 Console.WriteLine(destination + " " + distance + " " + prefNb);
             }
         }
@@ -142,6 +147,11 @@ namespace MultiClientServer
                     //Console.WriteLine("Foreach in Program.cs");
                     //foreach (KeyValuePair<int, Connection> Buur in Program.Buren)
                     //    Console.WriteLine("Buur = " + Buur.Key);
+                    /*foreach (int node in NetChange.nodes)
+                    {
+                        Ndis[new Tuple<int, int>(node, anderePoort)] = 20;
+                        Program.Buren[anderePoort].Write.WriteLine("M " + Program.MijnPoort + " " + node + " " + Du[node]);
+                    }*/
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
