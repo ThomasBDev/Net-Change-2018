@@ -55,7 +55,6 @@ namespace MultiClientServer
                     Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut, anderePoort));
                     Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
                 }
-                Console.WriteLine();
             }
         }
     }

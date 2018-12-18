@@ -113,7 +113,9 @@ namespace MultiClientServer
                     NetChange.Recompute(destination);
                     break;
                 case "RequestDu":
-                    Console.WriteLine("REQUEST");
+                    string REQUEST = "==================== REQUEST";
+
+                    Console.WriteLine(REQUEST);
                     Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
 
                     int besteBuur = Program.Nb[anderePoort];
@@ -124,10 +126,12 @@ namespace MultiClientServer
                         reply += " " + dist.Key + " " + dist.Value;
                     Program.Buren[besteBuur].Write.WriteLine(reply);
 
-                    Console.WriteLine("REQUEST");
+                    Console.WriteLine(REQUEST);
                     break;
                 case "ReplyDu":
-                    Console.WriteLine("REPLY");
+                    string REPLY = "==================== REPLY";
+
+                    Console.WriteLine(REPLY);
                     Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
 
                     int length = int.Parse(incomingMessage[2]);
@@ -147,6 +151,9 @@ namespace MultiClientServer
 
                         if (!Program.Ndis.Keys.Contains(viaBuurNaarDestination) && (Program.MijnPoort != destinationPort))
                         {
+                            //Console.WriteLine("Voeg " + destinationPort + " toe aan onze nodes table");
+                            //NetChange.nodes.Add(destinationPort);
+
                             Console.WriteLine("Voeg " + destinationPort + " " + distance + " toe aan onze Du table");
                             //distance komt van de nDis table, dus voor ons is dat +1.
                             Program.Du.Add(destinationPort, distance + 1);
@@ -164,7 +171,7 @@ namespace MultiClientServer
                     //NetChange.printDuTable();
                     //NetChange.printNdisTable();
 
-                    Console.WriteLine("REPLY");
+                    Console.WriteLine(REPLY);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

@@ -101,9 +101,13 @@ namespace MultiClientServer
                         Buren[anderePoort].Write.WriteLine("RequestDu " + MijnPoort);
                         break;
                     case "All":
+                        NetChange.printNodesTable();
                         NetChange.printDuTable();
                         NetChange.printNbTable();
                         NetChange.printNdisTable();
+                        break;
+                    case "Nodes":
+                        NetChange.printNodesTable();
                         break;
                     case "Du":
                         NetChange.printDuTable();

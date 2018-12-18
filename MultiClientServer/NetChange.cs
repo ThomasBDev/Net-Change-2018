@@ -19,6 +19,10 @@ namespace MultiClientServer
                 nodes.Add(Program.MijnPoort);
                 Console.WriteLine("Voeg MijnPoort " + Program.MijnPoort + " toe aan nodes in NetChange");
             }
+
+            else
+                Console.WriteLine("MijnPoort " + Program.MijnPoort + " zit al in nodes in NetChange");
+
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
                 int buurNummer = buur.Key;
@@ -34,6 +38,9 @@ namespace MultiClientServer
                     nodes.Add(buurNummer);
                     Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
                 }
+
+                else
+                    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
                 //Console.WriteLine("TEST: " + buur.Key);
             }
         }
@@ -97,9 +104,17 @@ namespace MultiClientServer
             buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + destination + " " + distance);
         }
 
+        public static void printNodesTable()
+        {
+            Console.WriteLine("Current Nodes table:");
+            foreach (int node in nodes)
+                Console.WriteLine(node);
+        }
+
         public static void printDuTable()
         {
             Console.WriteLine("Current Du table:");
+            Console.WriteLine("destination --> distance");
             foreach (KeyValuePair<int, int> element in Program.Du)
                 Console.WriteLine(element.Key + " " + element.Value);
         }
@@ -107,6 +122,7 @@ namespace MultiClientServer
         public static void printNbTable()
         {
             Console.WriteLine("Current Nb table:");
+            Console.WriteLine("destination --> pref neighbour");
             foreach (KeyValuePair<int, int> element in Program.Nb)
                 Console.WriteLine(element.Key + " " + element.Value);
         }
@@ -114,6 +130,7 @@ namespace MultiClientServer
         public static void printNdisTable()
         {
             Console.WriteLine("Current Ndis table:");
+            Console.WriteLine("from neighbour --> to destination --> distance");
             foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
                 Console.WriteLine(element.Key + " " + element.Value);
         }
