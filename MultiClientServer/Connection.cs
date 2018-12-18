@@ -151,13 +151,14 @@ namespace MultiClientServer
                             //distance komt van de nDis table, dus voor ons is dat +1.
                             Program.Du.Add(destinationPort, distance + 1);
 
+                            Console.WriteLine("Voeg " + destinationPort + " " + anderePoort + " toe aan onze Nb table");
+                            Program.Nb.Add(destinationPort, anderePoort);
+
                             Console.WriteLine("Voeg " + anderePoort + " " + destinationPort + " toe aan onze Ndis table");
                             Program.Ndis.Add(viaBuurNaarDestination, distance);
                         }
                         else
                             Console.WriteLine(anderePoort + " " + destinationPort + " staat al in onze Ndis table OF wij zijn de destination");
-
-                        Console.WriteLine();
                     }
 
                     //NetChange.printDuTable();
