@@ -46,12 +46,14 @@ namespace MultiClientServer
                 }
                 else
                 {
-                    Console.WriteLine("We maken een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
+                    if (Program.test)
+                        Console.WriteLine("We maken een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
+
                     // Zet de nieuwe verbinding in de verbindingslijst
-                    Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut, anderePoort));
-                    Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
                     Program.Du.Add(anderePoort, 1);
-                    Program.Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
+                    Program.Nb.Add(anderePoort, anderePoort); //(destination, pref neighbour)
+                    Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut, anderePoort));
+                    Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
                 }
                 Console.WriteLine();
             }

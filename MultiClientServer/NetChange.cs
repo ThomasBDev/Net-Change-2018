@@ -12,16 +12,29 @@ namespace MultiClientServer
         
         public static void InitMdis()
         {
+            Console.WriteLine("InitMdis:");
+
             if (!nodes.Contains(Program.MijnPoort))
+            {
                 nodes.Add(Program.MijnPoort);
+                Console.WriteLine("Voeg MijnPoort " + Program.MijnPoort + " toe aan nodes in NetChange");
+            }
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
+                int buurNummer = buur.Key;
+
+                Console.WriteLine("Vraag aan buur " + buurNummer + " wat zijn Du table is");
+
+                buur.Value.Write.WriteLine("RequestDu " + Program.MijnPoort);
+
                 // send Mydist MijnPoort 0 to buur
-                Console.WriteLine("InitMdis:");
-                sendMmessageTo(buur, Program.MijnPoort, 0);
-                if (!nodes.Contains(buur.Key))
-                    nodes.Add(buur.Key);
-                Console.WriteLine("TEST: " + buur.Key);
+                //sendMmessageTo(buur, Program.MijnPoort, 0);
+                if (!nodes.Contains(buurNummer))
+                {
+                    nodes.Add(buurNummer);
+                    Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
+                }
+                //Console.WriteLine("TEST: " + buur.Key);
             }
         }
 
@@ -82,6 +95,27 @@ namespace MultiClientServer
         {
             Console.WriteLine("sendMmessageTo " + buur.Key + " with destination " + destination + " and distance " + distance);
             buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + destination + " " + distance);
+        }
+
+        public static void printDuTable()
+        {
+            Console.WriteLine("Current Du table:");
+            foreach (KeyValuePair<int, int> element in Program.Du)
+                Console.WriteLine(element.Key + " " + element.Value);
+        }
+
+        public static void printNbTable()
+        {
+            Console.WriteLine("Current Nb table:");
+            foreach (KeyValuePair<int, int> element in Program.Nb)
+                Console.WriteLine(element.Key + " " + element.Value);
+        }
+
+        public static void printNdisTable()
+        {
+            Console.WriteLine("Current Ndis table:");
+            foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
+                Console.WriteLine(element.Key + " " + element.Value);
         }
     }
 }

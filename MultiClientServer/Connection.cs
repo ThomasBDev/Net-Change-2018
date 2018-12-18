@@ -24,7 +24,8 @@ namespace MultiClientServer
             Write = new StreamWriter(client.GetStream());
             Write.AutoFlush = true;
 
-            Console.WriteLine("Connection constructor Client -> Server");
+            if (Program.test)
+                Console.WriteLine("Connection constructor Client -> Server");
 
             Write.WriteLine("Poort: " + Program.MijnPoort);
 
@@ -37,7 +38,8 @@ namespace MultiClientServer
         {
             Read = read; Write = write;
 
-            Console.WriteLine("Connection constructor Server <- Client");
+            if (Program.test)
+                Console.WriteLine("Connection constructor Server <- Client");
             poort = mijnPoort;
 
             // Start het reader-loopje
@@ -53,6 +55,17 @@ namespace MultiClientServer
             {
                 while (true)
                 {
+                    if (Program.test)
+                    {
+                        Console.WriteLine("===============================================");
+
+                        NetChange.printDuTable();
+                        NetChange.printNbTable();
+                        NetChange.printNdisTable();
+
+                        Console.WriteLine("===============================================");
+                    }
+
                     listenForOtherNodes();
                 }
             }
@@ -65,7 +78,7 @@ namespace MultiClientServer
             string command = incomingMessage[0];
             int anderePoort = int.Parse(incomingMessage[1]);
 
-            Console.WriteLine("command " + command);
+            //Console.WriteLine("command " + command);
 
             switch (command)
             {
@@ -91,17 +104,66 @@ namespace MultiClientServer
                     Console.WriteLine("destination = " + destination);
                     Console.WriteLine("newDist     = " + newDist);
 
-                    Console.WriteLine("OLD Ndis:");
-                    foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
-                        Console.WriteLine(element);
+                    NetChange.printNdisTable();
 
                     Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
 
-                    Console.WriteLine("NEW Ndis:");
-                    foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
-                        Console.WriteLine(element);
+                    NetChange.printNdisTable();
 
-                    //NetChange.Recompute(destination);
+                    NetChange.Recompute(destination);
+                    break;
+                case "RequestDu":
+                    Console.WriteLine("REQUEST");
+                    Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
+
+                    int besteBuur = Program.Nb[anderePoort];
+                    int DuLength = Program.Du.Count;
+
+                    string reply = "ReplyDu " + Program.MijnPoort + " " + DuLength;
+                    foreach (KeyValuePair<int, int> dist in Program.Du)
+                        reply += " " + dist.Key + " " + dist.Value;
+                    Program.Buren[besteBuur].Write.WriteLine(reply);
+
+                    Console.WriteLine("REQUEST");
+                    break;
+                case "ReplyDu":
+                    Console.WriteLine("REPLY");
+                    Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
+
+                    int length = int.Parse(incomingMessage[2]);
+
+                    //NetChange.printDuTable();
+                    //NetChange.printNdisTable();
+
+                    for (int t = 0; t < length; t++)
+                    {
+                        int index = 3 + (2 * t);
+                        int destinationPort = int.Parse(incomingMessage[index]);
+                        int distance = int.Parse(incomingMessage[index + 1]);
+
+                        Console.WriteLine("destinationPort distance = " + destinationPort + " " + distance);
+
+                        Tuple<int, int> viaBuurNaarDestination = new Tuple<int, int>(anderePoort, destinationPort);
+
+                        if (!Program.Ndis.Keys.Contains(viaBuurNaarDestination) && (Program.MijnPoort != destinationPort))
+                        {
+                            Console.WriteLine("Voeg " + destinationPort + " " + distance + " toe aan onze Du table");
+                            //distance komt van de nDis table, dus voor ons is dat +1.
+                            Program.Du.Add(destinationPort, distance + 1);
+
+                            Console.WriteLine("Voeg " + anderePoort + " " + destinationPort + " toe aan onze Ndis table");
+                            Program.Ndis.Add(viaBuurNaarDestination, distance);
+                        }
+                        else
+                            Console.WriteLine(anderePoort + " " + destinationPort + " staat al in onze Ndis table OF wij zijn de destination");
+
+                        Console.WriteLine();
+                    }
+
+                    //NetChange.printDuTable();
+                    //NetChange.printNdisTable();
+
+                    Console.WriteLine("REPLY");
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

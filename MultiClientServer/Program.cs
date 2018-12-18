@@ -15,6 +15,8 @@ namespace MultiClientServer
         public static RoutingTable routingTable = new RoutingTable();
         static Input input = new Input();
 
+        public static bool test = false;
+
         static void Main(string[] args)
         {
             //Initialisatie.
@@ -23,31 +25,37 @@ namespace MultiClientServer
             new Server(MijnPoort);
 
             Du.Add(MijnPoort, 0);
-            Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
             Nb.Add(MijnPoort, MijnPoort);
+            //Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
 
             for (int t = 1; t < args.Length; t++)
             {
-                lock (Buren)
-                    lock (Du)
-                        lock (Nb)
-                            lock (Ndis)
-                            {
-                                int anderePoort = int.Parse(args[t]);
-                                if (MijnPoort < anderePoort)
-                                {
-                                    if (!Buren.ContainsKey(anderePoort))
-                                    {
-                                        Buren.Add(anderePoort, new Connection(anderePoort));
-                                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 1);
-                                        Du.Add(anderePoort, 1);
-                                        Nb.Add(anderePoort, anderePoort); //pref neighbour; (nb, destination)
-                                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
-                                        NetChange.Recompute(anderePoort);
-                                    }
-                                }
-                            }
+                int anderePoort = int.Parse(args[t]);
+                if (MijnPoort < anderePoort)
+                {
+                    if (!Buren.ContainsKey(anderePoort))
+                    {
+                        Du.Add(anderePoort, 1);
+                        Nb.Add(anderePoort, anderePoort); //(destination, pref neighbour)
+                        Buren.Add(anderePoort, new Connection(anderePoort));
+                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
+                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
+                        //NetChange.Recompute(anderePoort);
+                    }
+                }
             }
+
+            if (test)
+            {
+                Console.WriteLine("===============================================");
+
+                NetChange.printDuTable();
+                NetChange.printNdisTable();
+                NetChange.printNbTable();
+
+                Console.WriteLine("===============================================");
+            }
+
             NetChange.InitMdis();
 
             //Na de initialisatie.
@@ -72,7 +80,7 @@ namespace MultiClientServer
                 int anderePoort = -1;
 
                 //if voorkomt een out of array exception als je een invalid command geeft.
-                if (messageType == "B" || messageType == "C" || messageType == "D")
+                if (messageType == "B" || messageType == "C" || messageType == "D" || messageType == "REQ")
                     anderePoort = int.Parse(input[1]);
 
                 switch (messageType)
@@ -88,6 +96,23 @@ namespace MultiClientServer
                     case "D":
                         Console.WriteLine("DESTROY CONNECTION");
                         destroyConnection(anderePoort);
+                        break;
+                    case "REQ":
+                        Buren[anderePoort].Write.WriteLine("RequestDu " + MijnPoort);
+                        break;
+                    case "All":
+                        NetChange.printDuTable();
+                        NetChange.printNbTable();
+                        NetChange.printNdisTable();
+                        break;
+                    case "Du":
+                        NetChange.printDuTable();
+                        break;
+                    case "Nb":
+                        NetChange.printNbTable();
+                        break;
+                    case "Ndis":
+                        NetChange.printNdisTable();
                         break;
                     default:
                         Console.WriteLine("INVALID COMMAND");
