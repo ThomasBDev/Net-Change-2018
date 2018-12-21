@@ -17,11 +17,11 @@ namespace MultiClientServer
             if (!nodes.Contains(Program.MijnPoort))
             {
                 nodes.Add(Program.MijnPoort);
-                Console.WriteLine("Voeg MijnPoort " + Program.MijnPoort + " toe aan nodes in NetChange");
+                //Console.WriteLine("Voeg MijnPoort " + Program.MijnPoort + " toe aan nodes in NetChange");
             }
 
-            else
-                Console.WriteLine("MijnPoort " + Program.MijnPoort + " zit al in nodes in NetChange");
+            //else
+            //    Console.WriteLine("MijnPoort " + Program.MijnPoort + " zit al in nodes in NetChange");
 
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
@@ -36,12 +36,12 @@ namespace MultiClientServer
                 if (!nodes.Contains(buurNummer))
                 {
                     nodes.Add(buurNummer);
-                    Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
+                    //Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
                 }
 
-                else
-                    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
-                //Console.WriteLine("TEST: " + buur.Key);
+                //else
+                //    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
+                ////Console.WriteLine("TEST: " + buur.Key);
             }
         }
 

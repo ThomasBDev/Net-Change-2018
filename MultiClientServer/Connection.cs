@@ -85,14 +85,16 @@ namespace MultiClientServer
                 case "B":
                     string message = incomingMessage[2];
                     Console.WriteLine("B bericht binnengekomen = " + command + " " + anderePoort + " " + message);
+                    Program.sendMessage(anderePoort, message);
                     break;
                 case "C":
                     Console.WriteLine("C bericht binnengekomen = " + command + " " + anderePoort);
+                    //Server.cs ziet Connections binnenkomen en roept al createConnectionToNode aan.
+                    //Je hoeft dus hier niet Du, Nb, etc. aan te passen.
                     break;
                 case "D":
                     Console.WriteLine("D bericht binnengekomen = " + command + " " + anderePoort);
-                    Program.Buren.Remove(poort);
-                    Program.Du.Remove(poort);
+                    Program.destroyConnectionWithNode(poort);
                     break;
                 case "M":
                     int destination = int.Parse(incomingMessage[2]);
@@ -115,8 +117,8 @@ namespace MultiClientServer
                 case "RequestDu":
                     string REQUEST = "==================== REQUEST";
 
-                    Console.WriteLine(REQUEST);
-                    Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
+                    //Console.WriteLine(REQUEST);
+                    //Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
 
                     int besteBuur = Program.Nb[anderePoort];
                     int DuLength = Program.Du.Count;
@@ -126,13 +128,13 @@ namespace MultiClientServer
                         reply += " " + dist.Key + " " + dist.Value;
                     Program.Buren[besteBuur].Write.WriteLine(reply);
 
-                    Console.WriteLine(REQUEST);
+                    //Console.WriteLine(REQUEST);
                     break;
                 case "ReplyDu":
                     string REPLY = "==================== REPLY";
 
-                    Console.WriteLine(REPLY);
-                    Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
+                    //Console.WriteLine(REPLY);
+                    //Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
 
                     int length = int.Parse(incomingMessage[2]);
 
@@ -145,7 +147,7 @@ namespace MultiClientServer
                         int destinationPort = int.Parse(incomingMessage[index]);
                         int distance = int.Parse(incomingMessage[index + 1]);
 
-                        Console.WriteLine("destinationPort distance = " + destinationPort + " " + distance);
+                        //Console.WriteLine("destinationPort distance = " + destinationPort + " " + distance);
 
                         Tuple<int, int> viaBuurNaarDestination = new Tuple<int, int>(anderePoort, destinationPort);
 
@@ -154,24 +156,24 @@ namespace MultiClientServer
                             //Console.WriteLine("Voeg " + destinationPort + " toe aan onze nodes table");
                             //NetChange.nodes.Add(destinationPort);
 
-                            Console.WriteLine("Voeg " + destinationPort + " " + distance + " toe aan onze Du table");
+                            //Console.WriteLine("Voeg " + destinationPort + " " + distance + " toe aan onze Du table");
                             //distance komt van de nDis table, dus voor ons is dat +1.
                             Program.Du.Add(destinationPort, distance + 1);
 
-                            Console.WriteLine("Voeg " + destinationPort + " " + anderePoort + " toe aan onze Nb table");
+                            //Console.WriteLine("Voeg " + destinationPort + " " + anderePoort + " toe aan onze Nb table");
                             Program.Nb.Add(destinationPort, anderePoort);
 
-                            Console.WriteLine("Voeg " + anderePoort + " " + destinationPort + " toe aan onze Ndis table");
+                            //Console.WriteLine("Voeg " + anderePoort + " " + destinationPort + " toe aan onze Ndis table");
                             Program.Ndis.Add(viaBuurNaarDestination, distance);
                         }
-                        else
-                            Console.WriteLine(anderePoort + " " + destinationPort + " staat al in onze Ndis table OF wij zijn de destination");
+                        //else
+                        //    Console.WriteLine(anderePoort + " " + destinationPort + " staat al in onze Ndis table OF wij zijn de destination");
                     }
 
                     //NetChange.printDuTable();
                     //NetChange.printNdisTable();
 
-                    Console.WriteLine(REPLY);
+                    //Console.WriteLine(REPLY);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

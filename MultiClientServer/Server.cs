@@ -33,7 +33,7 @@ namespace MultiClientServer
                 clientOut.AutoFlush = true;
 
                 string[] messageFromClient = clientIn.ReadLine().Split();
-                string command = messageFromClient[0];
+                //string command = messageFromClient[0];
                 int anderePoort = int.Parse(messageFromClient[1]);
 
                 //Je hebt een verbinding heen en terug tussen A en B.
@@ -50,10 +50,7 @@ namespace MultiClientServer
                         Console.WriteLine("We maken een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
 
                     // Zet de nieuwe verbinding in de verbindingslijst
-                    Program.Du.Add(anderePoort, 1);
-                    Program.Nb.Add(anderePoort, anderePoort); //(destination, pref neighbour)
-                    Program.Buren.Add(anderePoort, new Connection(clientIn, clientOut, anderePoort));
-                    Program.Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
+                    Program.createConnectionWithNode(anderePoort, new Connection(clientIn, clientOut, anderePoort));
                 }
             }
         }

@@ -24,9 +24,10 @@ namespace MultiClientServer
             Console.Title = "NetChange " +  args[0];
             new Server(MijnPoort);
 
-            Du.Add(MijnPoort, 0);
-            Nb.Add(MijnPoort, MijnPoort);
-            //Ndis.Add(new Tuple<int, int>(MijnPoort, MijnPoort), 0);
+            Du[MijnPoort] = 0;
+            Nb[MijnPoort] = MijnPoort;
+            //Geen Buren en Ndis.
+            //Je hebt geen buren en de informatie van hen nodig om naar jezelf te wijzen.
 
             for (int t = 1; t < args.Length; t++)
             {
@@ -35,10 +36,7 @@ namespace MultiClientServer
                 {
                     if (!Buren.ContainsKey(anderePoort))
                     {
-                        Du.Add(anderePoort, 1);
-                        Nb.Add(anderePoort, anderePoort); //(destination, pref neighbour)
-                        Buren.Add(anderePoort, new Connection(anderePoort));
-                        Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
+                        createConnectionWithNode(anderePoort, new Connection(anderePoort));
                         Console.WriteLine("INITIAL Verbonden: " + anderePoort);
                         //NetChange.Recompute(anderePoort);
                     }
@@ -65,6 +63,27 @@ namespace MultiClientServer
             }
         }
 
+        static public void createConnectionWithNode(int anderePoort, Connection connectionType)
+        {
+            //Je weet zeker dat een Buur de beste afstand en keus is voor zichzelf.
+            //Je kan de tabellen dus direct updaten.
+            //Met de Add methodes kan je een "Key al toegevoegd" exception krijgen.
+            Du[anderePoort] = 1;
+            Nb[anderePoort] = anderePoort; //(destination, pref neighbour)
+            Buren.Add(anderePoort, connectionType);
+            Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
+        }
+
+        static public void destroyConnectionWithNode(int anderePoort)
+        {
+            //Dit moet met de Recompute?
+            //Je kan misschien nog een omweg vinden.
+            Du.Remove(anderePoort);
+            Nb.Remove(anderePoort);
+            Buren.Remove(anderePoort);
+            Ndis.Remove(new Tuple<int, int>(anderePoort, anderePoort));
+        }
+
         static void listenForUserInput()
         {
             string[] input = Console.ReadLine().Split();
@@ -86,19 +105,54 @@ namespace MultiClientServer
                 switch (messageType)
                 {
                     case "B":
-                        Console.WriteLine("SEND MESSAGE");
-                        sendMessage(anderePoort, input[2]);
+                        //We kennen de destination niet op deze node.
+                        if (!Nb.ContainsKey(anderePoort))
+                            Console.WriteLine("Poort " + anderePoort + " is niet bekend");
+                        //We kennen de destination.
+                        //Voor wie is het bestemd?
+                        else
+                            sendMessage(anderePoort, input[2]);
                         break;
                     case "C":
-                        Console.WriteLine("CREATE CONNECTION");
-                        createConnection(anderePoort);
+                        if (Buren.ContainsKey(anderePoort))
+                            Console.WriteLine("We hebben al een verbinding naar " + anderePoort);
+                        else
+                        {
+                            try
+                            {
+                                createConnectionWithNode(anderePoort, new Connection(anderePoort));
+                                //We hebben net de node van anderePoort toegevoegd aan onze Buren.
+                                //Deze aanroep zou dus geen "Key not found" exception moeten kunnen produceren.
+                                Buren[anderePoort].Write.WriteLine("C " + anderePoort);
+
+                                Console.WriteLine("Verbonden: " + anderePoort);
+                            }
+                            catch (System.Net.Sockets.SocketException)
+                            {
+                                Console.WriteLine("De node bestaat niet");
+                            }
+                        }
                         break;
                     case "D":
-                        Console.WriteLine("DESTROY CONNECTION");
-                        destroyConnection(anderePoort);
+                        if (!Buren.ContainsKey(anderePoort))
+                            Console.WriteLine("Poort " + anderePoort + " is niet bekend");
+                        else
+                        {
+                            int besteBuur = Nb[anderePoort];
+                            Buren[besteBuur].Write.WriteLine("D " + anderePoort);
+                            destroyConnectionWithNode(anderePoort);
+
+                            Console.WriteLine("Verbroken: " + anderePoort);
+                        }
                         break;
                     case "REQ":
-                        Buren[anderePoort].Write.WriteLine("RequestDu " + MijnPoort);
+                        if (anderePoort != MijnPoort)
+                        {
+                            int besteBuur = Nb[anderePoort];
+                            Buren[besteBuur].Write.WriteLine("RequestDu " + MijnPoort);
+                        }
+                        else
+                            Console.WriteLine("Ndis van jezelf is de Du table, je hoeft het dus niet uit te voeren.");
                         break;
                     case "All":
                         NetChange.printNodesTable();
@@ -127,69 +181,30 @@ namespace MultiClientServer
 
         static void printRoutingTable()
         {
-            foreach (KeyValuePair<Tuple<int,int>,int> kvp in Ndis)
+            Console.WriteLine("destination --> distance --> preferred neighbour");
+
+            foreach (KeyValuePair<int, int> elem in Nb)
             {
-                int prefNb = kvp.Key.Item1;
-                int destination = kvp.Key.Item2;
-                int distance = kvp.Value;
-                //int prefNb = Nb[];
-                Console.WriteLine(destination + " " + distance + " " + prefNb);
+                int destination = elem.Key;
+                int distance = Du[destination];
+                int prefNeighbour = elem.Value;
+                Console.WriteLine(destination + " " + distance + " " + prefNeighbour);
             }
         }
 
-        static void sendMessage(int anderePoort, string bericht)
+        static public void sendMessage(int anderePoort, string bericht)
         {
-            if (!Buren.ContainsKey(anderePoort))
-                Console.WriteLine("Poort " + anderePoort + " is niet bekend");
-            else if (MijnPoort != anderePoort)
-            {
-                int besteBuur;
-                Console.WriteLine("Bericht voor " + anderePoort + " doorgestuurd naar " + "besteBuur");
-                Buren[anderePoort].Write.WriteLine("B " + anderePoort + " " + bericht);
-            }
+            Console.WriteLine("Send message aangeroepen.");
+            //Het bericht is voor ons bestemd.
+            //Een beetje raar om een bericht voor jezelf in te typen, maar het kan gebeuren.
+            if (MijnPoort == anderePoort)
+                Console.WriteLine(bericht);
+            //Het bericht is voor een andere node bestemd.
             else
             {
-                Console.WriteLine("Bericht is voor ons bestemd.");
-                Buren[anderePoort].Write.WriteLine(bericht);
-            }
-        }
-
-        static void createConnection(int anderePoort)
-        {
-            if (Buren.ContainsKey(anderePoort))
-                Console.WriteLine("We hebben al een verbinding naar " + anderePoort);
-            else
-            {
-                try
-                {
-                    Buren.Add(anderePoort, new Connection(anderePoort));
-                    Du.Add(anderePoort, 1);
-                    Buren[anderePoort].Write.WriteLine("C " + anderePoort);
-
-                    Console.WriteLine("Verbonden: " + anderePoort);
-
-                    //Console.WriteLine("Foreach in Program.cs");
-                    //foreach (KeyValuePair<int, Connection> Buur in Program.Buren)
-                    //    Console.WriteLine("Buur = " + Buur.Key);
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    Console.WriteLine("De node bestaat niet");
-                }
-            }
-        }
-
-        static void destroyConnection(int anderePoort)
-        {
-            if (!Buren.ContainsKey(anderePoort))
-                Console.WriteLine("Poort " + anderePoort + " is niet bekend");
-            else
-            {
-                Buren[anderePoort].Write.WriteLine("D " + anderePoort);
-                Buren.Remove(anderePoort);
-                Du.Remove(anderePoort);
-
-                Console.WriteLine("Verbroken: " + anderePoort);
+                int besteBuur = Nb[anderePoort];
+                Console.WriteLine("Bericht voor " + anderePoort + " doorgestuurd naar " + besteBuur);
+                Buren[besteBuur].Write.WriteLine("B " + anderePoort + " " + bericht);
             }
         }
     }
