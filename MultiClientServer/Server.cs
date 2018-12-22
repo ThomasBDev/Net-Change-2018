@@ -46,8 +46,7 @@ namespace MultiClientServer
                 }
                 else
                 {
-                    if (Program.test)
-                        Console.WriteLine("We maken een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
+                    Console.WriteLine("We antwoorden met een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
 
                     // Zet de nieuwe verbinding in de verbindingslijst
                     Program.createConnectionWithNode(anderePoort, new Connection(clientIn, clientOut, anderePoort));

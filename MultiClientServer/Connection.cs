@@ -142,6 +142,9 @@ namespace MultiClientServer
                         int destinationPort = int.Parse(incomingMessage[index]);
                         int distance = int.Parse(incomingMessage[index + 1]);
 
+                        if (!NetChange.nodes.Contains(destinationPort))
+                            NetChange.nodes.Add(destinationPort);
+
                         //Console.WriteLine("destinationPort distance = " + destinationPort + " " + distance);
 
                         Tuple<int, int> viaBuurNaarDestination = new Tuple<int, int>(anderePoort, destinationPort);

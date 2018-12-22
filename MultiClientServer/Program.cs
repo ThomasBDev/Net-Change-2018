@@ -36,9 +36,16 @@ namespace MultiClientServer
                 {
                     if (!Buren.ContainsKey(anderePoort))
                     {
-                        createConnectionWithNode(anderePoort, new Connection(anderePoort));
-                        Console.WriteLine("INITIAL Verbonden: " + anderePoort);
-                        //NetChange.Recompute(anderePoort);
+                        Console.WriteLine("We vragen om een verbinding met " + anderePoort);
+
+                        try
+                        {
+                            createConnectionWithNode(anderePoort, new Connection(anderePoort));
+                        }
+                        catch (System.Net.Sockets.SocketException)
+                        {
+                            Console.WriteLine("De node bestaat nog niet");
+                        }
                     }
                 }
             }
@@ -66,6 +73,7 @@ namespace MultiClientServer
         static public void createConnectionWithNode(int anderePoort, Connection connectionType)
         {
             Console.WriteLine("We maken contact met " + anderePoort);
+            NetChange.nodes.Add(anderePoort);
 
             //Je weet zeker dat een Buur de beste afstand en keus is voor zichzelf.
             //Je kan de tabellen dus direct updaten.
@@ -74,6 +82,10 @@ namespace MultiClientServer
             Nb[anderePoort] = anderePoort; //(destination, pref neighbour)
             Buren.Add(anderePoort, connectionType);
             Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
+
+            Console.WriteLine("Verbonden: " + anderePoort);
+
+            NetChange.Recompute(anderePoort);
         }
 
         static public void destroyConnectionWithNode(int anderePoort)
@@ -82,15 +94,21 @@ namespace MultiClientServer
 
             //Dit moet met de Recompute?
             //Je kan misschien nog een omweg vinden.
+
+            //NetChange.Recompute(anderePoort);
             Du.Remove(anderePoort);
             Nb.Remove(anderePoort);
             Buren.Remove(anderePoort);
             Ndis.Remove(new Tuple<int, int>(anderePoort, anderePoort));
+
+            Console.WriteLine("Verbroken: " + anderePoort);
+
+            NetChange.Recompute(anderePoort);
         }
 
         static public void requestDataFromNode(int poort)
         {
-            Console.WriteLine("Vraag aan buur " + poort + " wat zijn Du table is");
+            Console.WriteLine("Vraag aan " + poort + " wat zijn Du table is");
             int besteBuur = Nb[poort];
             Buren[besteBuur].Write.WriteLine("RequestDu " + MijnPoort);
         }
@@ -129,19 +147,10 @@ namespace MultiClientServer
                             Console.WriteLine("We hebben al een verbinding naar " + anderePoort);
                         else
                         {
-                            try
-                            {
-                                createConnectionWithNode(anderePoort, new Connection(anderePoort));
-                                //We hebben net de node van anderePoort toegevoegd aan onze Buren.
-                                //Deze aanroep zou dus geen "Key not found" exception moeten kunnen produceren.
-                                Buren[anderePoort].Write.WriteLine("C " + anderePoort);
-
-                                Console.WriteLine("Verbonden: " + anderePoort);
-                            }
-                            catch (System.Net.Sockets.SocketException)
-                            {
-                                Console.WriteLine("De node bestaat niet");
-                            }
+                            createConnectionWithNode(anderePoort, new Connection(anderePoort));
+                            //We hebben net de node van anderePoort toegevoegd aan onze Buren.
+                            //Deze aanroep zou dus geen "Key not found" exception moeten kunnen produceren.
+                            Buren[anderePoort].Write.WriteLine("C " + anderePoort);                                
                         }
                         break;
                     case "D":
@@ -152,8 +161,6 @@ namespace MultiClientServer
                             int besteBuur = Nb[anderePoort];
                             Buren[besteBuur].Write.WriteLine("D " + anderePoort);
                             destroyConnectionWithNode(anderePoort);
-
-                            Console.WriteLine("Verbroken: " + anderePoort);
                         }
                         break;
                     case "REQ":

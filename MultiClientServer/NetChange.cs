@@ -12,7 +12,7 @@ namespace MultiClientServer
         
         public static void InitMdis()
         {
-            Console.WriteLine("InitMdis:");
+            Console.WriteLine("InitMdis START");
 
             if (!nodes.Contains(Program.MijnPoort))
             {
@@ -25,6 +25,7 @@ namespace MultiClientServer
 
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
+                //Vraag data van je directe Buren.
                 int buurNummer = buur.Key;
                 Program.requestDataFromNode(buurNummer);
 
@@ -40,11 +41,20 @@ namespace MultiClientServer
                 //    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
                 ////Console.WriteLine("TEST: " + buur.Key);
             }
+
+            //Console.WriteLine();
+            //printNodesTable();
+            //printNbTable();
+            //Console.WriteLine();
+
+            Console.WriteLine("InitMdis END");
         }
 
         public static void Recompute(int Destination)
         {
-            int oldDu = 1;
+            Console.WriteLine("--------------------------------------------Recompute START");
+
+            int oldDu = Program.Du[Destination];
             if (Program.MijnPoort == Destination)
             {
                 Program.Du[Program.MijnPoort] = 0;
@@ -70,14 +80,14 @@ namespace MultiClientServer
                     }
                     catch { }
                 int distance = 1 + smallestNdis;
-                if (distance < 3)
+                if (distance < maxNetworkSize)
                 {
                     Program.Du[Destination] = distance;
                     Program.Nb[Destination] = newPrefNb;
                 }
                 else
                 {
-                    Program.Du[Destination] = 3;
+                    Program.Du[Destination] = maxNetworkSize;
                     Program.Nb[Destination] = 0;
                 }
             }
@@ -85,14 +95,16 @@ namespace MultiClientServer
             Console.WriteLine("DISTANCES:");
             Console.WriteLine("Destination = " + Destination);
             Console.WriteLine(Program.Du[Destination] + " " + oldDu);
+
             if (Program.Du[Destination] != oldDu)
             {
                 foreach (KeyValuePair<int, Connection> buur in Program.Buren)
                 {
-                    Console.WriteLine("Recompute:");
                     sendMmessageTo(buur, Destination, Program.Du[Destination]);
                 }
             }
+
+            Console.WriteLine("--------------------------------------------Recompute END");
         }
 
         public static void sendMmessageTo(KeyValuePair<int, Connection> buur, int destination, int distance)
