@@ -92,6 +92,8 @@ namespace MultiClientServer
                             Buren.Add(anderePoort, connectionType);
                             Ndis.Add(new Tuple<int, int>(anderePoort, anderePoort), 0);
 
+                            requestDataFromNode(anderePoort);
+
                             Console.WriteLine("Verbonden: " + anderePoort);
 
                             NetChange.Recompute(anderePoort);

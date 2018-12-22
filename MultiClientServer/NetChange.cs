@@ -23,24 +23,26 @@ namespace MultiClientServer
             //else
             //    Console.WriteLine("MijnPoort " + Program.MijnPoort + " zit al in nodes in NetChange");
 
-            foreach (KeyValuePair<int, Connection> buur in Program.Buren)
-            {
-                //Vraag data van je directe Buren.
-                int buurNummer = buur.Key;
-                Program.requestDataFromNode(buurNummer);
 
-                // send Mydist MijnPoort 0 to buur
-                //sendMmessageTo(buur, Program.MijnPoort, 0);
-                if (!nodes.Contains(buurNummer))
-                {
-                    nodes.Add(buurNummer);
-                    //Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
-                }
 
-                //else
-                //    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
-                ////Console.WriteLine("TEST: " + buur.Key);
-            }
+            //foreach (KeyValuePair<int, Connection> buur in Program.Buren)
+            //{
+            //    //Vraag data van je directe Buren.
+            //    int buurNummer = buur.Key;
+            //    Program.requestDataFromNode(buurNummer);
+
+            //    // send Mydist MijnPoort 0 to buur
+            //    //sendMmessageTo(buur, Program.MijnPoort, 0);
+            //    if (!nodes.Contains(buurNummer))
+            //    {
+            //        nodes.Add(buurNummer);
+            //        //Console.WriteLine("Voeg nieuwe node " + buurNummer + " toe aan nodes in NetChange");
+            //    }
+
+            //    //else
+            //    //    Console.WriteLine("buurNummer " + buurNummer + " zit al in nodes in NetChange");
+            //    ////Console.WriteLine("TEST: " + buur.Key);
+            //}
 
             Console.WriteLine("//InitMdis END");
         }
