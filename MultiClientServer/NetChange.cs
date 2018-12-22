@@ -12,7 +12,7 @@ namespace MultiClientServer
         
         public static void InitMdis()
         {
-            Console.WriteLine("InitMdis START");
+            Console.WriteLine("//InitMdis START");
 
             if (!nodes.Contains(Program.MijnPoort))
             {
@@ -42,17 +42,12 @@ namespace MultiClientServer
                 ////Console.WriteLine("TEST: " + buur.Key);
             }
 
-            //Console.WriteLine();
-            //printNodesTable();
-            //printNbTable();
-            //Console.WriteLine();
-
-            Console.WriteLine("InitMdis END");
+            Console.WriteLine("//InitMdis END");
         }
 
         public static void Recompute(int Destination)
         {
-            Console.WriteLine("--------------------------------------------Recompute START");
+            Console.WriteLine("//--------------------------------------------Recompute START");
 
             int oldDu = Program.Du[Destination];
             if (Program.MijnPoort == Destination)
@@ -92,9 +87,9 @@ namespace MultiClientServer
                 }
             }
 
-            Console.WriteLine("DISTANCES:");
-            Console.WriteLine("Destination = " + Destination);
-            Console.WriteLine(Program.Du[Destination] + " " + oldDu);
+            Console.WriteLine("//DISTANCES:");
+            Console.WriteLine("//Destination = " + Destination);
+            Console.WriteLine("//" + Program.Du[Destination] + " " + oldDu);
 
             if (Program.Du[Destination] != oldDu)
             {
@@ -104,42 +99,42 @@ namespace MultiClientServer
                 }
             }
 
-            Console.WriteLine("--------------------------------------------Recompute END");
+            Console.WriteLine("//--------------------------------------------Recompute END");
         }
 
         public static void sendMmessageTo(KeyValuePair<int, Connection> buur, int destination, int distance)
         {
-            Console.WriteLine("sendMmessageTo " + buur.Key + " with destination " + destination + " and distance " + distance);
+            Console.WriteLine("//sendMmessageTo " + buur.Key + " with destination " + destination + " and distance " + distance);
             buur.Value.Write.WriteLine("M " + Program.MijnPoort + " " + destination + " " + distance);
         }
 
         public static void printNodesTable()
         {
-            Console.WriteLine("Current Nodes table:");
+            Console.WriteLine("//Current Nodes table:");
             foreach (int node in nodes)
                 Console.WriteLine(node);
         }
 
         public static void printDuTable()
         {
-            Console.WriteLine("Current Du table:");
-            Console.WriteLine("destination --> distance");
+            Console.WriteLine("//Current Du table:");
+            Console.WriteLine("//destination --> distance");
             foreach (KeyValuePair<int, int> element in Program.Du)
                 Console.WriteLine(element.Key + " " + element.Value);
         }
 
         public static void printNbTable()
         {
-            Console.WriteLine("Current Nb table:");
-            Console.WriteLine("destination --> pref neighbour");
+            Console.WriteLine("//Current Nb table:");
+            Console.WriteLine("//destination --> pref neighbour");
             foreach (KeyValuePair<int, int> element in Program.Nb)
                 Console.WriteLine(element.Key + " " + element.Value);
         }
 
         public static void printNdisTable()
         {
-            Console.WriteLine("Current Ndis table:");
-            Console.WriteLine("from neighbour --> to destination --> distance");
+            Console.WriteLine("//Current Ndis table:");
+            Console.WriteLine("//from neighbour --> to destination --> distance");
             foreach (KeyValuePair<Tuple<int, int>, int> element in Program.Ndis)
                 Console.WriteLine(element.Key + " " + element.Value);
         }

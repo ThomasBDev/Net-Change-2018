@@ -1,0 +1,480 @@
+Onderdeel;Corrects;Attempts;Punten;Max
+std-Opstarten;0;1;0;4
+std-Connect;0;0;0;1
+std-Disconnect;0;0;0;1
+std-Berichten;0;0;0;1
+std-BerichtNaVerandering;0;0;0;0,5
+std-NetwerkPartitie;0;0;0;1
+Opstarten;0;0;0;4
+Connect;0;0;0;1
+Disconnect;0;0;0;1
+Berichten;0;0;0;1
+BerichtNaVerandering;0;0;0;0,5
+NetwerkPartitie;0;0;0;1
+BovenLimiet;0;1;0;1
+Totaal;-;-;0;(van 18)
+
+Let op: deze berekening is niet het definitieve cijfer. Dit is alleen maar een automatisch gegenereerde score voor het testbare gedeelte, en het staat nog niet vast dat we dit bij de beoordeling gebruiken.
+
+------------------------------------
+
+Testcase;Status;Tijd;Omschrijving
+Standaard;Incorrect;14,38;Opstarten netwerk
+
+------------------------------------
+
+1;Standaard;Incorrect;14,38;Opstarten netwerk
+Test 1 - Standaard
+
+Fout bij opzetten netwerk - de routing-tabel is incorrect.
+Het programma ziet de verbinding van 55500 naar 55503 niet.
+Het programma ziet de verbinding van 55500 naar 55504 niet.
+Het programma ziet de verbinding van 55500 naar 55505 niet.
+Het programma ziet de verbinding van 55501 naar 55503 niet.
+Het programma ziet de verbinding van 55501 naar 55504 niet.
+Het programma ziet de verbinding van 55501 naar 55505 niet.
+Het programma ziet de verbinding van 55503 naar 55500 niet.
+Het programma ziet de verbinding van 55503 naar 55501 niet.
+Het programma ziet de verbinding van 55503 naar 55504 niet.
+Het programma ziet de verbinding van 55504 naar 55500 niet.
+Het programma ziet de verbinding van 55504 naar 55501 niet.
+Het programma ziet de verbinding van 55504 naar 55503 niet.
+Het programma ziet de verbinding van 55505 naar 55500 niet.
+Het programma ziet de verbinding van 55505 naar 55501 niet.
+Het programma ziet de verbinding van 55505 naar 55502 niet.
+
+Log
+start MultiClientServer.exe 55500 55501 55502
+start MultiClientServer.exe 55501 55500 55502
+start MultiClientServer.exe 55502 55500 55501 55503 55504
+start MultiClientServer.exe 55503 55502 55505
+start MultiClientServer.exe 55504 55502 55505
+start MultiClientServer.exe 55505 55503 55504
+55503 < //We vragen om een verbinding met 55505
+55501 < //We vragen om een verbinding met 55502
+55500 < //We vragen om een verbinding met 55501
+55502 < //We vragen om een verbinding met 55503
+55504 < //We vragen om een verbinding met 55505
+55505 < //InitMdis START
+55505 < //InitMdis END
+55502 < //We antwoorden met een nieuwe verbinding van 55502 naar 55501
+55505 < //We antwoorden met een nieuwe verbinding van 55505 naar 55503
+55501 < //We maken contact met 55502
+55501 < Verbonden: 55502
+55503 < //We maken contact met 55505
+55503 < Verbonden: 55505
+55501 < //We antwoorden met een nieuwe verbinding van 55501 naar 55500
+55501 < //--------------------------------------------Recompute START
+55501 < //DISTANCES:
+55501 < //Destination = 55502
+55501 < //1 1
+55501 < //--------------------------------------------Recompute END
+55501 < //InitMdis START
+55501 < //Vraag aan 55502 wat zijn Du table is
+55501 < //InitMdis END
+55503 < //--------------------------------------------Recompute START
+55503 < //DISTANCES:
+55503 < //Destination = 55505
+55503 < //1 1
+55503 < //--------------------------------------------Recompute END
+55503 < //InitMdis START
+55503 < //Vraag aan 55505 wat zijn Du table is
+55503 < //InitMdis END
+55502 < //We maken contact met 55501
+55502 < Verbonden: 55501
+55502 < //==================== REQUEST
+55502 < //55501 wil weten wat onze Du table is
+55502 < //==================== REQUEST
+55501 < //==================== REPLY
+55501 < //We hebben een ReplyDu gekregen van 55502
+55501 < //==================== REPLY
+55503 < //We antwoorden met een nieuwe verbinding van 55503 naar 55502
+55505 < //We maken contact met 55503
+55502 < //--------------------------------------------Recompute START
+55502 < //DISTANCES:
+55502 < //Destination = 55501
+55505 < Verbonden: 55503
+55502 < //1 1
+55502 < //--------------------------------------------Recompute END
+55500 < //We maken contact met 55501
+55505 < //--------------------------------------------Recompute START
+55505 < //DISTANCES:
+55505 < //Destination = 55503
+55505 < //1 1
+55505 < //--------------------------------------------Recompute END
+55500 < Verbonden: 55501
+55505 < //We antwoorden met een nieuwe verbinding van 55505 naar 55504
+55505 < //==================== REQUEST
+55505 < //55503 wil weten wat onze Du table is
+55503 < //==================== REPLY
+55505 < //==================== REQUEST
+55503 < //We hebben een ReplyDu gekregen van 55505
+55503 < //==================== REPLY
+55503 < //We maken contact met 55502
+55503 < Verbonden: 55502
+55503 < //--------------------------------------------Recompute START
+55501 < //We maken contact met 55500
+55501 < Verbonden: 55500
+55501 < //--------------------------------------------Recompute START
+55504 < //We maken contact met 55505
+55500 < //--------------------------------------------Recompute START
+55500 < //DISTANCES:
+55500 < //Destination = 55501
+55500 < //1 1
+55500 < //--------------------------------------------Recompute END
+55504 < Verbonden: 55505
+55500 < //We vragen om een verbinding met 55502
+55502 < //We maken contact met 55503
+55502 < Verbonden: 55503
+55502 < //--------------------------------------------Recompute START
+55504 < //--------------------------------------------Recompute START
+55504 < //DISTANCES:
+55504 < //Destination = 55505
+55504 < //1 1
+55504 < //--------------------------------------------Recompute END
+55504 < //InitMdis START
+55504 < //Vraag aan 55505 wat zijn Du table is
+55504 < //InitMdis END
+55505 < //==================== REQUEST
+55505 < //55504 wil weten wat onze Du table is
+55505 < //We maken contact met 55504
+55505 < Verbonden: 55504
+55505 < //--------------------------------------------Recompute START
+55503 < //DISTANCES:
+55501 < //DISTANCES:
+55503 < //Destination = 55502
+55503 < //1 1
+55501 < //Destination = 55500
+55503 < //--------------------------------------------Recompute END
+55501 < //1 1
+55501 < //--------------------------------------------Recompute END
+55502 < //DISTANCES:
+55502 < //Destination = 55503
+55502 < //1 1
+55502 < //--------------------------------------------Recompute END
+55502 < //We vragen om een verbinding met 55504
+55505 < //DISTANCES:
+55505 < //Destination = 55504
+55505 < //1 1
+55505 < //--------------------------------------------Recompute END
+55502 < //We antwoorden met een nieuwe verbinding van 55502 naar 55500
+55500 < //We maken contact met 55502
+55502 < //We maken contact met 55500
+55500 < Verbonden: 55502
+55500 < //--------------------------------------------Recompute START
+55502 < Verbonden: 55500
+55502 < //--------------------------------------------Recompute START
+55502 < //DISTANCES:
+55502 < //Destination = 55500
+55502 < //1 1
+55502 < //--------------------------------------------Recompute END
+55504 < //We antwoorden met een nieuwe verbinding van 55504 naar 55502
+55502 < //We maken contact met 55504
+55502 < Verbonden: 55504
+55502 < //--------------------------------------------Recompute START
+55500 < //DISTANCES:
+55500 < //Destination = 55502
+55500 < //1 1
+55500 < //--------------------------------------------Recompute END
+55504 < //We maken contact met 55502
+55504 < Verbonden: 55502
+55504 < //--------------------------------------------Recompute START
+55502 < //DISTANCES:
+55502 < //Destination = 55504
+55502 < //1 1
+55502 < //--------------------------------------------Recompute END
+55500 < //InitMdis START
+55502 < //InitMdis START
+55500 < //Vraag aan 55501 wat zijn Du table is
+55501 < //==================== REQUEST
+55500 < //Vraag aan 55502 wat zijn Du table is
+55501 < //55500 wil weten wat onze Du table is
+55500 < //InitMdis END
+55501 < //==================== REQUEST
+55502 < //==================== REQUEST
+55502 < //55500 wil weten wat onze Du table is
+55502 < //Vraag aan 55501 wat zijn Du table is
+55500 < //==================== REPLY
+55500 < //We hebben een ReplyDu gekregen van 55502
+55500 < //==================== REPLY
+55500 < //We hebben een ReplyDu gekregen van 55501
+55502 < //==================== REQUEST
+55501 < //==================== REQUEST
+55501 < //55502 wil weten wat onze Du table is
+55502 < //Vraag aan 55503 wat zijn Du table is
+55501 < //==================== REQUEST
+55502 < //==================== REPLY
+55502 < //We hebben een ReplyDu gekregen van 55501
+55503 < //==================== REQUEST
+55503 < //55502 wil weten wat onze Du table is
+55502 < //Vraag aan 55500 wat zijn Du table is
+55503 < //==================== REQUEST
+55502 < //==================== REPLY
+55502 < //We hebben een ReplyDu gekregen van 55503
+55502 < //==================== REPLY
+55502 < //Vraag aan 55504 wat zijn Du table is
+55504 < //==================== REQUEST
+55504 < //55502 wil weten wat onze Du table is
+55502 < //InitMdis END
+55504 < //==================== REQUEST
+55502 < //==================== REPLY
+55502 < //We hebben een ReplyDu gekregen van 55504
+55504 < //DISTANCES:
+55504 < //Destination = 55502
+55504 < //1 1
+55504 < //--------------------------------------------Recompute END
+55500 > R
+55501 > R
+55502 > R
+55503 > R
+55504 > R
+55505 > R
+55503 < //destination --> distance --> preferred neighbour
+55502 < //destination --> distance --> preferred neighbour
+55501 < //destination --> distance --> preferred neighbour
+55503 < 55503 0 55503
+55502 < 55502 0 55502
+55501 < 55501 0 55501
+55503 < 55505 1 55505
+55501 < 55502 1 55502
+55503 < 55502 1 55502
+55502 < 55501 1 55501
+55501 < 55500 1 55500
+55502 < 55503 1 55503
+55502 < 55500 1 55500
+55502 < 55504 1 55504
+55502 < 55505 2 55503
+55504 < //destination --> distance --> preferred neighbour
+55504 < 55504 0 55504
+55504 < 55505 1 55505
+55505 < //destination --> distance --> preferred neighbour
+55500 < //destination --> distance --> preferred neighbour
+55504 < 55502 1 55502
+55505 < 55505 0 55505
+55500 < 55500 0 55500
+55505 < 55503 1 55503
+55505 < 55504 1 55504
+55500 < 55501 1 55501
+55500 < 55502 1 55502
+
+Process 55500:
+//We vragen om een verbinding met 55501
+//We maken contact met 55501
+Verbonden: 55501
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55501
+//1 1
+//--------------------------------------------Recompute END
+//We vragen om een verbinding met 55502
+//We maken contact met 55502
+Verbonden: 55502
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55502
+//1 1
+//--------------------------------------------Recompute END
+//InitMdis START
+//Vraag aan 55501 wat zijn Du table is
+//Vraag aan 55502 wat zijn Du table is
+//InitMdis END
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55502
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55501
+> R
+//destination --> distance --> preferred neighbour
+55500 0 55500
+55501 1 55501
+55502 1 55502
+
+Process 55501:
+//We vragen om een verbinding met 55502
+//We maken contact met 55502
+Verbonden: 55502
+//We antwoorden met een nieuwe verbinding van 55501 naar 55500
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55502
+//1 1
+//--------------------------------------------Recompute END
+//InitMdis START
+//Vraag aan 55502 wat zijn Du table is
+//InitMdis END
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55502
+//==================== REPLY
+//We maken contact met 55500
+Verbonden: 55500
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55500
+//1 1
+//--------------------------------------------Recompute END
+//==================== REQUEST
+//55500 wil weten wat onze Du table is
+//==================== REQUEST
+//==================== REQUEST
+//55502 wil weten wat onze Du table is
+//==================== REQUEST
+> R
+//destination --> distance --> preferred neighbour
+55501 0 55501
+55502 1 55502
+55500 1 55500
+
+Process 55502:
+//We vragen om een verbinding met 55503
+//We antwoorden met een nieuwe verbinding van 55502 naar 55501
+//We maken contact met 55501
+Verbonden: 55501
+//==================== REQUEST
+//55501 wil weten wat onze Du table is
+//==================== REQUEST
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55501
+//1 1
+//--------------------------------------------Recompute END
+//We maken contact met 55503
+Verbonden: 55503
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55503
+//1 1
+//--------------------------------------------Recompute END
+//We vragen om een verbinding met 55504
+//We antwoorden met een nieuwe verbinding van 55502 naar 55500
+//We maken contact met 55500
+Verbonden: 55500
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55500
+//1 1
+//--------------------------------------------Recompute END
+//We maken contact met 55504
+Verbonden: 55504
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55504
+//1 1
+//--------------------------------------------Recompute END
+//InitMdis START
+//==================== REQUEST
+//55500 wil weten wat onze Du table is
+//Vraag aan 55501 wat zijn Du table is
+//==================== REQUEST
+//Vraag aan 55503 wat zijn Du table is
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55501
+//Vraag aan 55500 wat zijn Du table is
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55503
+//==================== REPLY
+//Vraag aan 55504 wat zijn Du table is
+//InitMdis END
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55504
+> R
+//destination --> distance --> preferred neighbour
+55502 0 55502
+55501 1 55501
+55503 1 55503
+55500 1 55500
+55504 1 55504
+55505 2 55503
+
+Process 55503:
+//We vragen om een verbinding met 55505
+//We maken contact met 55505
+Verbonden: 55505
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55505
+//1 1
+//--------------------------------------------Recompute END
+//InitMdis START
+//Vraag aan 55505 wat zijn Du table is
+//InitMdis END
+//We antwoorden met een nieuwe verbinding van 55503 naar 55502
+//==================== REPLY
+//We hebben een ReplyDu gekregen van 55505
+//==================== REPLY
+//We maken contact met 55502
+Verbonden: 55502
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55502
+//1 1
+//--------------------------------------------Recompute END
+//==================== REQUEST
+//55502 wil weten wat onze Du table is
+//==================== REQUEST
+> R
+//destination --> distance --> preferred neighbour
+55503 0 55503
+55505 1 55505
+55502 1 55502
+
+Process 55504:
+//We vragen om een verbinding met 55505
+//We maken contact met 55505
+Verbonden: 55505
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55505
+//1 1
+//--------------------------------------------Recompute END
+//InitMdis START
+//Vraag aan 55505 wat zijn Du table is
+//InitMdis END
+//We antwoorden met een nieuwe verbinding van 55504 naar 55502
+//We maken contact met 55502
+Verbonden: 55502
+//--------------------------------------------Recompute START
+//==================== REQUEST
+//55502 wil weten wat onze Du table is
+//==================== REQUEST
+//DISTANCES:
+//Destination = 55502
+//1 1
+//--------------------------------------------Recompute END
+> R
+//destination --> distance --> preferred neighbour
+55504 0 55504
+55505 1 55505
+55502 1 55502
+
+Process 55505:
+//InitMdis START
+//InitMdis END
+//We antwoorden met een nieuwe verbinding van 55505 naar 55503
+//We maken contact met 55503
+Verbonden: 55503
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55503
+//1 1
+//--------------------------------------------Recompute END
+//We antwoorden met een nieuwe verbinding van 55505 naar 55504
+//==================== REQUEST
+//55503 wil weten wat onze Du table is
+//==================== REQUEST
+//==================== REQUEST
+//55504 wil weten wat onze Du table is
+//We maken contact met 55504
+Verbonden: 55504
+//--------------------------------------------Recompute START
+//DISTANCES:
+//Destination = 55504
+//1 1
+//--------------------------------------------Recompute END
+> R
+//destination --> distance --> preferred neighbour
+55505 0 55505
+55503 1 55503
+55504 1 55504
+
+Microsoft Windows NT 6.2.9200.0 (x64)
+.NET version: 4.0.30319.42000
+2 physical core(s), 4 virtual core(s) (hyperthreading), 1 processor(s)

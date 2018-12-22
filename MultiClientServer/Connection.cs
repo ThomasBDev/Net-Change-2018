@@ -84,16 +84,16 @@ namespace MultiClientServer
             {
                 case "B":
                     string message = incomingMessage[2];
-                    Console.WriteLine("B bericht binnengekomen = " + command + " " + anderePoort + " " + message);
+                    Console.WriteLine("//B bericht binnengekomen = " + command + " " + anderePoort + " " + message);
                     Program.sendMessage(anderePoort, message);
                     break;
                 case "C":
-                    Console.WriteLine("C bericht binnengekomen = " + command + " " + anderePoort);
+                    Console.WriteLine("//C bericht binnengekomen = " + command + " " + anderePoort);
                     //Server.cs ziet Connections binnenkomen en roept al createConnectionToNode aan.
                     //Je hoeft dus hier niet Du, Nb, etc. aan te passen.
                     break;
                 case "D":
-                    Console.WriteLine("D bericht binnengekomen = " + command + " " + anderePoort);
+                    Console.WriteLine("//D bericht binnengekomen = " + command + " " + anderePoort);
                     Program.destroyConnectionWithNode(poort);
                     break;
                 case "M":
@@ -108,16 +108,17 @@ namespace MultiClientServer
 
                     NetChange.printNdisTable();
 
-                    Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
+                    lock (Program.Ndis)
+                        Program.Ndis[new Tuple<int, int>(anderePoort, destination)] = newDist;
 
                     NetChange.printNdisTable();
 
                     NetChange.Recompute(destination);
                     break;
                 case "RequestDu":
-                    string REQUEST = "==================== REQUEST";
+                    string REQUEST = "//==================== REQUEST";
                     Console.WriteLine(REQUEST);
-                    Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
+                    Console.WriteLine("//" + anderePoort + " wil weten wat onze Du table is");
 
                     int besteBuur = Program.Nb[anderePoort];
                     int DuLength = Program.Du.Count;
@@ -130,9 +131,9 @@ namespace MultiClientServer
                     Console.WriteLine(REQUEST);
                     break;
                 case "ReplyDu":
-                    string REPLY = "==================== REPLY";
+                    string REPLY = "//==================== REPLY";
                     Console.WriteLine(REPLY);
-                    Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
+                    Console.WriteLine("//We hebben een " + command + " gekregen van " + anderePoort);
 
                     int length = int.Parse(incomingMessage[2]);
 
@@ -171,7 +172,7 @@ namespace MultiClientServer
                     Console.WriteLine(REPLY);
                     break;
                 default:
-                    Console.WriteLine("other command = " + command);
+                    Console.WriteLine("//other command = " + command);
                     break;
             }
         }

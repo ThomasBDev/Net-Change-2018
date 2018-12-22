@@ -42,11 +42,11 @@ namespace MultiClientServer
                 //Anders wil het programma een 2de verbinding van B naar A maken en dat kan niet/is niet nodig.
                 if (Program.Buren.ContainsKey(anderePoort))
                 {
-                    Console.WriteLine("We hebben al een verbinding van " + Program.MijnPoort + " naar " + anderePoort);
+                    Console.WriteLine("//We hebben al een verbinding van " + Program.MijnPoort + " naar " + anderePoort);
                 }
                 else
                 {
-                    Console.WriteLine("We antwoorden met een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
+                    Console.WriteLine("//We antwoorden met een nieuwe verbinding van " + Program.MijnPoort + " naar " + anderePoort);
 
                     // Zet de nieuwe verbinding in de verbindingslijst
                     Program.createConnectionWithNode(anderePoort, new Connection(clientIn, clientOut, anderePoort));
