@@ -26,10 +26,7 @@ namespace MultiClientServer
             foreach (KeyValuePair<int, Connection> buur in Program.Buren)
             {
                 int buurNummer = buur.Key;
-
-                Console.WriteLine("Vraag aan buur " + buurNummer + " wat zijn Du table is");
-
-                buur.Value.Write.WriteLine("RequestDu " + Program.MijnPoort);
+                Program.requestDataFromNode(buurNummer);
 
                 // send Mydist MijnPoort 0 to buur
                 //sendMmessageTo(buur, Program.MijnPoort, 0);

@@ -116,9 +116,8 @@ namespace MultiClientServer
                     break;
                 case "RequestDu":
                     string REQUEST = "==================== REQUEST";
-
-                    //Console.WriteLine(REQUEST);
-                    //Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
+                    Console.WriteLine(REQUEST);
+                    Console.WriteLine(anderePoort + " wil weten wat onze Du table is");
 
                     int besteBuur = Program.Nb[anderePoort];
                     int DuLength = Program.Du.Count;
@@ -128,18 +127,14 @@ namespace MultiClientServer
                         reply += " " + dist.Key + " " + dist.Value;
                     Program.Buren[besteBuur].Write.WriteLine(reply);
 
-                    //Console.WriteLine(REQUEST);
+                    Console.WriteLine(REQUEST);
                     break;
                 case "ReplyDu":
                     string REPLY = "==================== REPLY";
-
-                    //Console.WriteLine(REPLY);
-                    //Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
+                    Console.WriteLine(REPLY);
+                    Console.WriteLine("We hebben een " + command + " gekregen van " + anderePoort);
 
                     int length = int.Parse(incomingMessage[2]);
-
-                    //NetChange.printDuTable();
-                    //NetChange.printNdisTable();
 
                     for (int t = 0; t < length; t++)
                     {
@@ -170,10 +165,7 @@ namespace MultiClientServer
                         //    Console.WriteLine(anderePoort + " " + destinationPort + " staat al in onze Ndis table OF wij zijn de destination");
                     }
 
-                    //NetChange.printDuTable();
-                    //NetChange.printNdisTable();
-
-                    //Console.WriteLine(REPLY);
+                    Console.WriteLine(REPLY);
                     break;
                 default:
                     Console.WriteLine("other command = " + command);

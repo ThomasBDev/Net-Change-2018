@@ -65,6 +65,8 @@ namespace MultiClientServer
 
         static public void createConnectionWithNode(int anderePoort, Connection connectionType)
         {
+            Console.WriteLine("We maken contact met " + anderePoort);
+
             //Je weet zeker dat een Buur de beste afstand en keus is voor zichzelf.
             //Je kan de tabellen dus direct updaten.
             //Met de Add methodes kan je een "Key al toegevoegd" exception krijgen.
@@ -76,12 +78,21 @@ namespace MultiClientServer
 
         static public void destroyConnectionWithNode(int anderePoort)
         {
+            Console.WriteLine("We verbreken verbinding met " + anderePoort);
+
             //Dit moet met de Recompute?
             //Je kan misschien nog een omweg vinden.
             Du.Remove(anderePoort);
             Nb.Remove(anderePoort);
             Buren.Remove(anderePoort);
             Ndis.Remove(new Tuple<int, int>(anderePoort, anderePoort));
+        }
+
+        static public void requestDataFromNode(int poort)
+        {
+            Console.WriteLine("Vraag aan buur " + poort + " wat zijn Du table is");
+            int besteBuur = Nb[poort];
+            Buren[besteBuur].Write.WriteLine("RequestDu " + MijnPoort);
         }
 
         static void listenForUserInput()
@@ -147,10 +158,7 @@ namespace MultiClientServer
                         break;
                     case "REQ":
                         if (anderePoort != MijnPoort)
-                        {
-                            int besteBuur = Nb[anderePoort];
-                            Buren[besteBuur].Write.WriteLine("RequestDu " + MijnPoort);
-                        }
+                            requestDataFromNode(anderePoort);
                         else
                             Console.WriteLine("Ndis van jezelf is de Du table, je hoeft het dus niet uit te voeren.");
                         break;
